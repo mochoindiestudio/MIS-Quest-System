@@ -1,0 +1,18 @@
+/* Grid background tuning for the quest graph. Spacing matches QuestGraphView.GridSpacing (36px)
+   so "Snap to Grid" lines nodes up with the drawn lines. */
+GridBackground {
+    --grid-background-color: #282828;
+    --line-color: rgba(193, 196, 192, 0.1);
+    --thick-line-color: rgba(193, 196, 192, 0.2);
+    --spacing: 36;
+}
+
+/* The quest's root node gets a subtle accent so it reads as the start of the graph. */
+.quest-root-node > #node-border {
+    border-color: rgba(120, 170, 255, 0.75);
+    border-width: 1.5px;
+}
+
+.quest-root-node #title {
+    background-color: rgba(70, 100, 160, 0.55);
+}
