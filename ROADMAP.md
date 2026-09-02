@@ -31,9 +31,10 @@ Single source of truth for what's done and what's next. Design detail lives in
       objective fail → quest fail, time limit, capture/restore round-trip
 
 ### Phase 4 — v0.5.0 · Sample scene
-- [ ] `Samples~/` with a runnable tutorial `QuestList`
-- [ ] Camera + `InputSystemUIInputModule` EventSystem (`activeInputHandler` = 1)
-- [ ] Minimal on-screen tracker wired to `QuestLog` events
+- [x] Playable demo in `Assets/QuestSystemDemo/` — "Water from the Well" mini-game
+      (tilemap, inventory, crafting, quest log / toast / pause HUD). See `docs/quest-demo-scene.md`.
+      Added `QuestLog.OnObjectiveActivated`.
+- [ ] Trim it into the package `Samples~/` with a `.meta` and `package.json` `samples` entry
 
 ### Phase 5 — v0.6.0 · Dialog System bridge + polish
 - [ ] Sample glue: `DialogRunner.OnResponseEvent` → `QuestSignals.Report`

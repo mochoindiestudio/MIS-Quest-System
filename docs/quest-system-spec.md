@@ -207,6 +207,7 @@ QuestHandle log.Get(string questId);     // Title, Description, State, Objective
 // events  (all pass QuestHandle / ObjectiveHandle — see "As built" above)
 event Action<QuestHandle>                  OnQuestAvailable;
 event Action<QuestHandle>                  OnQuestStarted;
+event Action<QuestHandle, ObjectiveHandle> OnObjectiveActivated;  // stage reached / quest started (v0.3.0)
 event Action<QuestHandle, ObjectiveHandle> OnQuestAdvanced;       // an objective counter changed
 event Action<QuestHandle, ObjectiveHandle> OnObjectiveCompleted;
 event Action<QuestHandle, ObjectiveHandle> OnObjectiveFailed;

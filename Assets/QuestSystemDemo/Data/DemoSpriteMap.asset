@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7bf2904fac2fe6468ad0524684e5369, type: 3}
+  m_Name: DemoSpriteMap
+  m_EditorClassIdentifier: Assembly-CSharp::MochoIndieStudio.QuestSystemDemo.DemoSpriteMap
+  grass:
+    topLeft: {fileID: -593375104, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    top: {fileID: -849461930, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    topRight: {fileID: 1170707674, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    left: {fileID: -75407881, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    center: {fileID: -1632384601, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    right: {fileID: 1296022643, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    bottomLeft: {fileID: -1142820604, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    bottom: {fileID: 1978358976, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    bottomRight: {fileID: 54612387, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  dirt:
+    topLeft: {fileID: -544077440, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    top: {fileID: -789296196, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    topRight: {fileID: 1793634919, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    left: {fileID: 1315770513, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    center: {fileID: -1397692119, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    right: {fileID: -1828666992, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    bottomLeft: {fileID: 1514304173, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    bottom: {fileID: 1460777410, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    bottomRight: {fileID: 808436997, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  dirtPath:
+  - {fileID: -12453508, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: 1024757895, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: -1704467059, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: 690967827, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: -946098330, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  bigTree:
+  - {fileID: -868146697, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: -400835463, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: -506014105, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: 960726175, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  smallTree:
+  - {fileID: -1041205684, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: -723342787, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  rock1: {fileID: -46134498, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  rock2: {fileID: 0}
+  decor:
+  - {fileID: -998974399, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: -933152287, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: -136691115, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: 499825709, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: 165482609, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: -238639028, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  - {fileID: 2106710414, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  well:
+    gridSize: {x: 1, y: 2}
+    tiles:
+    - {fileID: -1361807946, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    - {fileID: 545585246, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  bucket: {fileID: 700157854, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  rope: {fileID: 194284881, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  bucketOnRope: {fileID: 700157854, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  bucketOfWater: {fileID: 700157854, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+  player:
+    down:
+    - {fileID: -1357072352, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    - {fileID: -1258880107, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    - {fileID: -1337106001, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    - {fileID: -647898477, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    up:
+    - {fileID: 656266629, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    - {fileID: -369869885, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    - {fileID: 550039952, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    - {fileID: -884853492, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    left:
+    - {fileID: -1173199228, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    - {fileID: 1697094721, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    - {fileID: -562338560, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    - {fileID: -280080391, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    right:
+    - {fileID: -85640742, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    - {fileID: -729526288, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    - {fileID: -2128654723, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}
+    - {fileID: -316449176, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}

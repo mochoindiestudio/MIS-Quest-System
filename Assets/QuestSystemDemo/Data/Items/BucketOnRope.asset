@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdc28d4a1a90b6b4ea14020288078830, type: 3}
+  m_Name: BucketOnRope
+  m_EditorClassIdentifier: Assembly-CSharp::MochoIndieStudio.QuestSystemDemo.ItemDefinition
+  id: bucket_on_rope
+  displayName: Bucket on a Rope
+  icon: {fileID: 700157854, guid: 1164f713efa22f043b3e8914896c1b59, type: 3}

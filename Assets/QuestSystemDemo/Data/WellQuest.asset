@@ -1,0 +1,116 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c1727462da48c444b6051c178d07dc1, type: 3}
+  m_Name: WellQuest
+  m_EditorClassIdentifier: MochoIndieStudio.QuestSystem::MochoIndieStudio.QuestSystem.Quest
+  id: ca75ebefd0dd4671beae4b89d1ba303b
+  title: Water from the Well
+  description: The village well has run dry-looking. Fetch yourself some water.
+  objectives:
+  - id: c18b41ca9f3f458fabe724ac119be96a
+    description: Find a wooden bucket
+    required: 1
+    hidden: 0
+    stage: 0
+    completeWhen:
+      rid: 6304861415802142783
+    failWhen:
+      rid: -2
+    editorPosition: {x: 0, y: 0}
+    editorWidth: 0
+  - id: 5cb11246c1c64b2dac86a8969d892606
+    description: Find a length of rope
+    required: 1
+    hidden: 0
+    stage: 1
+    completeWhen:
+      rid: 6304861415802142784
+    failWhen:
+      rid: -2
+    editorPosition: {x: 0, y: 0}
+    editorWidth: 0
+  - id: c1e4d8518a46469baaf049ea1c4fb4ce
+    description: Craft a bucket on a rope
+    required: 1
+    hidden: 0
+    stage: 2
+    completeWhen:
+      rid: 6304861415802142785
+    failWhen:
+      rid: -2
+    editorPosition: {x: 0, y: 0}
+    editorWidth: 0
+  - id: 20a0cdba00674254b66c63da2ec094f2
+    description: Find the old well
+    required: 1
+    hidden: 0
+    stage: 3
+    completeWhen:
+      rid: 6304861415802142786
+    failWhen:
+      rid: -2
+    editorPosition: {x: 0, y: 0}
+    editorWidth: 0
+  - id: a950e09241544e98a44f505459494293
+    description: Lower the bucket into the well
+    required: 1
+    hidden: 0
+    stage: 4
+    completeWhen:
+      rid: 6304861415802142787
+    failWhen:
+      rid: -2
+    editorPosition: {x: 0, y: 0}
+    editorWidth: 0
+  unlockedBy: []
+  unlockMode: 0
+  advancedUnlock:
+    rid: -2
+  timeLimitSeconds: 0
+  repeatable: 0
+  editorPosition: {x: 0, y: 0}
+  editorWidth: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 6304861415802142783
+      type: {class: SignalCondition, ns: MochoIndieStudio.QuestSystem, asm: MochoIndieStudio.QuestSystem}
+      data:
+        eventId: item_collected
+        payload: bucket
+        requiredCount: 1
+    - rid: 6304861415802142784
+      type: {class: SignalCondition, ns: MochoIndieStudio.QuestSystem, asm: MochoIndieStudio.QuestSystem}
+      data:
+        eventId: item_collected
+        payload: rope
+        requiredCount: 1
+    - rid: 6304861415802142785
+      type: {class: SignalCondition, ns: MochoIndieStudio.QuestSystem, asm: MochoIndieStudio.QuestSystem}
+      data:
+        eventId: item_crafted
+        payload: bucket_on_rope
+        requiredCount: 1
+    - rid: 6304861415802142786
+      type: {class: SignalCondition, ns: MochoIndieStudio.QuestSystem, asm: MochoIndieStudio.QuestSystem}
+      data:
+        eventId: reached
+        payload: well
+        requiredCount: 1
+    - rid: 6304861415802142787
+      type: {class: SignalCondition, ns: MochoIndieStudio.QuestSystem, asm: MochoIndieStudio.QuestSystem}
+      data:
+        eventId: used
+        payload: well
+        requiredCount: 1

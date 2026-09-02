@@ -44,6 +44,11 @@ namespace MochoIndieStudio.QuestSystem
         /// <summary>A quest started (<see cref="QuestState.Active"/>).</summary>
         public event Action<QuestHandle> OnQuestStarted;
 
+        /// <summary>An objective became <see cref="ObjectiveState.Active"/> -- its stage was reached
+        /// (or the quest just started). Fires before any same-frame completion check, so a listener
+        /// always sees an objective activate even if it completes immediately.</summary>
+        public event Action<QuestHandle, ObjectiveHandle> OnObjectiveActivated;
+
         /// <summary>An active objective's progress counter changed (e.g. "3 / 10" became "4 / 10").</summary>
         public event Action<QuestHandle, ObjectiveHandle> OnQuestAdvanced;
 
@@ -745,6 +750,7 @@ namespace MochoIndieStudio.QuestSystem
 
                 objective.State = ObjectiveState.Active;
                 changed = true;
+                OnObjectiveActivated?.Invoke(handle, objective);
 
                 var ctx = new QuestConditionContext(objective, this);
                 if (objective.Definition.CompleteWhen != null && objective.Definition.CompleteWhen.Evaluate(in ctx))

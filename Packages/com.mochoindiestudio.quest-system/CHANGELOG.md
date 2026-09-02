@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.0] - 2026-09-02
+
+### Added
+
+- `QuestLog.OnObjectiveActivated` event — fires when an objective becomes `Active` (its stage is
+  reached, or the quest just started), before any same-frame completion check. Lets a UI react to a
+  new objective without polling.
+
+### Notes
+
+- The repo now carries a full playable demo under `Assets/QuestSystemDemo/` ("Water from the Well" —
+  tilemap mini-game exercising the quest system end to end). It is **not** part of the shipped
+  package. Build it with `Tools ▸ Quest Demo ▸ Build Scene`; see `docs/quest-demo-scene.md`.
+
 ## [0.2.0] - 2026-09-02
 
 Object-model simplification. **Breaking** — the package has no external consumers yet, so no
