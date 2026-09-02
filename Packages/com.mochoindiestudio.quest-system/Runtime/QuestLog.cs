@@ -206,7 +206,7 @@ namespace MochoIndieStudio.QuestSystem
         }
 
         /// <summary>
-        /// Completes an objective directly. Intended for <see cref="ManualCompletion"/> objectives;
+        /// Completes an objective directly. Intended for <see cref="ManualCondition"/> objectives;
         /// works on any active objective. No-op if the objective is not currently active.
         /// </summary>
         public void CompleteObjective(string questId, string objectiveId)
@@ -283,7 +283,7 @@ namespace MochoIndieStudio.QuestSystem
         /// <summary>
         /// Binds a predicate that, while the objective is active, completes it once it returns true.
         /// Polled every <see cref="Tick"/>. Pass a null predicate to clear a binding. Mainly for
-        /// <see cref="ManualCompletion"/> objectives (e.g. a tutorial step polling input state).
+        /// <see cref="ManualCondition"/> objectives (e.g. a tutorial step polling input state).
         /// </summary>
         public void BindObjective(string questId, string objectiveId, Func<bool> predicate)
         {
@@ -433,19 +433,19 @@ namespace MochoIndieStudio.QuestSystem
                 for (int o = 0; o < objectives.Count; o++)
                 {
                     ObjectiveHandle objective = objectives[o];
-                    if (objective.State != ObjectiveState.Active || objective.Definition.Completion == null)
+                    if (objective.State != ObjectiveState.Active || objective.Definition.CompleteWhen == null)
                     {
                         continue;
                     }
 
-                    var ctx = new ObjectiveCompletionContext(objective, this);
-                    bool advanced = objective.Definition.Completion.HandleSignal(ctx, eventId, payload, amount);
+                    var ctx = new QuestConditionContext(objective, this);
+                    bool advanced = objective.Definition.CompleteWhen.HandleSignal(in ctx, eventId, payload, amount);
                     if (advanced)
                     {
                         OnQuestAdvanced?.Invoke(handle, objective);
                     }
 
-                    if (objective.Definition.Completion.IsSatisfied(ctx))
+                    if (objective.Definition.CompleteWhen.Evaluate(in ctx))
                     {
                         CompleteObjectiveInternal(handle, objective);
                     }
@@ -581,7 +581,7 @@ namespace MochoIndieStudio.QuestSystem
                 switch (handle.State)
                 {
                     case QuestState.Inactive:
-                        if (AllConditionsPass(handle.Definition.Prerequisites))
+                        if (ArePrerequisitesMet(handle))
                         {
                             SetAvailable(handle);
                             changed = true;
@@ -589,7 +589,7 @@ namespace MochoIndieStudio.QuestSystem
                         break;
 
                     case QuestState.Available:
-                        if (!AllConditionsPass(handle.Definition.Prerequisites))
+                        if (!ArePrerequisitesMet(handle))
                         {
                             QuestState previous = handle.State;
                             handle.State = QuestState.Inactive;
@@ -609,19 +609,12 @@ namespace MochoIndieStudio.QuestSystem
 
         private bool ProcessActiveQuest(QuestHandle handle)
         {
-            // 1. Quest-level fail conditions (OR).
-            if (AnyConditionPasses(handle.Definition.FailConditions))
-            {
-                FailQuestInternal(handle, QuestFailReason.FailCondition);
-                return true;
-            }
-
             bool changed = false;
 
-            // 2. Activate objectives whose stage is now reachable.
+            // 1. Activate objectives whose stage is now reachable.
             changed |= ActivateReachableObjectives(handle);
 
-            // 3. Per-objective fail conditions + satisfied checks.
+            // 2. Per-objective fail-when guard + complete-when check.
             List<ObjectiveHandle> objectives = handle.MutableObjectives;
             for (int o = 0; o < objectives.Count; o++)
             {
@@ -631,7 +624,9 @@ namespace MochoIndieStudio.QuestSystem
                     continue;
                 }
 
-                if (AnyConditionPasses(objective.Definition.FailConditions))
+                var ctx = new QuestConditionContext(objective, this);
+
+                if (EvaluateCondition(objective.Definition.FailWhen, in ctx))
                 {
                     FailObjectiveInternal(handle, objective);
                     if (handle.State != QuestState.Active)
@@ -643,15 +638,14 @@ namespace MochoIndieStudio.QuestSystem
                     continue;
                 }
 
-                var ctx = new ObjectiveCompletionContext(objective, this);
-                if (objective.Definition.Completion != null && objective.Definition.Completion.IsSatisfied(ctx))
+                if (objective.Definition.CompleteWhen != null && objective.Definition.CompleteWhen.Evaluate(in ctx))
                 {
                     CompleteObjectiveInternal(handle, objective);
                     changed = true;
                 }
             }
 
-            // 4. Quest completion.
+            // 3. Quest completion.
             if (handle.State == QuestState.Active && AllRequiredObjectivesComplete(handle))
             {
                 CompleteQuestInternal(handle);
@@ -752,8 +746,8 @@ namespace MochoIndieStudio.QuestSystem
                 objective.State = ObjectiveState.Active;
                 changed = true;
 
-                var ctx = new ObjectiveCompletionContext(objective, this);
-                if (objective.Definition.Completion != null && objective.Definition.Completion.IsSatisfied(ctx))
+                var ctx = new QuestConditionContext(objective, this);
+                if (objective.Definition.CompleteWhen != null && objective.Definition.CompleteWhen.Evaluate(in ctx))
                 {
                     CompleteObjectiveInternal(handle, objective);
                 }
@@ -865,32 +859,50 @@ namespace MochoIndieStudio.QuestSystem
 
         #region Condition helpers
 
-        private bool AllConditionsPass(List<QuestCondition> conditions)
+        /// <summary>
+        /// Whether a quest's prerequisites currently hold: every (or, in
+        /// <see cref="PrerequisiteMode.Any"/>, at least one) quest in <see cref="Quest.UnlockedBy"/>
+        /// is <see cref="QuestState.Completed"/>, AND the optional <see cref="Quest.AdvancedUnlock"/>
+        /// condition passes. An empty <see cref="Quest.UnlockedBy"/> list always passes.
+        /// </summary>
+        private bool ArePrerequisitesMet(QuestHandle handle)
         {
-            for (int i = 0; i < conditions.Count; i++)
+            List<Quest> unlockedBy = handle.Definition.UnlockedBy;
+            if (unlockedBy != null && unlockedBy.Count > 0)
             {
-                QuestCondition condition = conditions[i];
-                if (condition != null && !condition.Evaluate(this))
+                bool any = false;
+                bool all = true;
+
+                for (int i = 0; i < unlockedBy.Count; i++)
+                {
+                    Quest prerequisite = unlockedBy[i];
+                    bool completed = prerequisite != null &&
+                                     GetQuestState(prerequisite.Id) == QuestState.Completed;
+                    any |= completed;
+                    all &= completed;
+                }
+
+                bool listMet = handle.Definition.UnlockMode == PrerequisiteMode.Any ? any : all;
+                if (!listMet)
                 {
                     return false;
                 }
             }
 
-            return true;
+            var ctx = new QuestConditionContext(null, this);
+            return EvaluateConditionDefaultTrue(handle.Definition.AdvancedUnlock, in ctx);
         }
 
-        private bool AnyConditionPasses(List<QuestCondition> conditions)
+        /// <summary>Evaluates a nullable condition; null counts as false.</summary>
+        private static bool EvaluateCondition(QuestCondition condition, in QuestConditionContext ctx)
         {
-            for (int i = 0; i < conditions.Count; i++)
-            {
-                QuestCondition condition = conditions[i];
-                if (condition != null && condition.Evaluate(this))
-                {
-                    return true;
-                }
-            }
+            return condition != null && condition.Evaluate(in ctx);
+        }
 
-            return false;
+        /// <summary>Evaluates a nullable condition; null counts as true (an absent gate is open).</summary>
+        private static bool EvaluateConditionDefaultTrue(QuestCondition condition, in QuestConditionContext ctx)
+        {
+            return condition == null || condition.Evaluate(in ctx);
         }
 
         #endregion

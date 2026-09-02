@@ -5,7 +5,7 @@ namespace MochoIndieStudio.QuestSystem
     /// <summary>
     /// The global entry point a game uses to tell the quest system that something happened:
     /// <c>QuestSignals.Report("enemy_killed", "wolf")</c>. Every live <see cref="QuestLog"/> receives
-    /// the report and advances any matching <see cref="SignalCompletion"/> objective.
+    /// the report and advances any matching <see cref="SignalCondition"/> objective.
     ///
     /// This is the one static in the package. It is a stateless forwarder -- it holds no quest data,
     /// only the set of live logs, each of which adds and removes itself. A game normally has exactly
@@ -18,7 +18,7 @@ namespace MochoIndieStudio.QuestSystem
         /// <summary>
         /// Reports a game signal to every live <see cref="QuestLog"/>.
         /// </summary>
-        /// <param name="eventId">Signal identifier, matched against <see cref="SignalCompletion.EventId"/>.</param>
+        /// <param name="eventId">Signal identifier, matched against <see cref="SignalCondition.EventId"/>.</param>
         /// <param name="payload">Optional data; a signal objective with a non-empty payload only matches an equal one.</param>
         /// <param name="amount">Progress to add (defaults to 1). Values &lt;= 0 are ignored.</param>
         public static void Report(string eventId, string payload = null, int amount = 1)

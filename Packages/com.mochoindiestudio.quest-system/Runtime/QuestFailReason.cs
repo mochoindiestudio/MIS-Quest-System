@@ -9,13 +9,11 @@ namespace MochoIndieStudio.QuestSystem
         /// <summary>Game code called <see cref="QuestLog.FailQuest"/> directly.</summary>
         ScriptedFail = 0,
 
-        /// <summary>One of the quest's fail conditions evaluated true while it was active.</summary>
-        FailCondition = 1,
-
-        /// <summary>A required objective moved to <see cref="ObjectiveState.Failed"/>.</summary>
-        RequiredObjectiveFailed = 2,
+        /// <summary>A required objective moved to <see cref="ObjectiveState.Failed"/>
+        /// (its <see cref="Objective.FailWhen"/> passed).</summary>
+        RequiredObjectiveFailed = 1,
 
         /// <summary>The quest's <see cref="Quest.TimeLimitSeconds"/> of active time elapsed.</summary>
-        TimedOut = 3
+        TimedOut = 2
     }
 }

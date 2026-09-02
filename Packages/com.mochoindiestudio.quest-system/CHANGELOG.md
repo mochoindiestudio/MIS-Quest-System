@@ -2,6 +2,38 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.0] - 2026-09-02
+
+Object-model simplification. **Breaking** — the package has no external consumers yet, so no
+migration path is provided; re-author any local quest assets.
+
+### Changed
+
+- **One unified `QuestCondition` tree.** `ObjectiveCompletion` and `ConditionCompletion` are removed;
+  `SignalCompletion` → `SignalCondition`, `ManualCompletion` → `ManualCondition`. The same condition
+  type now drives objective *complete-when*, objective *fail-when* and a quest's advanced unlock.
+  `QuestCondition.Evaluate` takes `in QuestConditionContext` (was `IQuestContext`); the counting hook
+  is `HandleSignal`, the UI target is `GetProgressTarget`.
+- **`Objective`**: `Completion` → `CompleteWhen`; the `FailConditions` list → a single optional
+  `FailWhen` condition (use a `CompositeCondition` for several).
+- **`Quest`**: `Prerequisites` and `FailConditions` are removed. Prerequisites are now `UnlockedBy`
+  (a `List<Quest>`) + `UnlockMode` (`All` / `Any`) + an optional `AdvancedUnlock` condition. A quest
+  fails only when a required objective fails or its time limit expires.
+- `QuestStateCondition` references a `Quest` asset directly instead of a GUID string.
+- `QuestFailReason` drops `FailCondition`.
+- `Quest.OnValidate` backfills a null `CompleteWhen` with a `SignalCondition`.
+
+### Added
+
+- **Quest List graph window** (`QuestListGraphEditorWindow`) — opens on double-clicking a
+  `QuestList`. One node per quest; drag from a quest's "Unlocks" port to another's "Requires" port to
+  author a prerequisite link (written into `UnlockedBy`). Drop `Quest` assets onto the canvas to add
+  them; "New Quest" creates one beside the list; prerequisite cycles are refused; double-clicking a
+  node opens that quest's own graph.
+- `PrerequisiteMode` enum; `IQuestGraphCanvas` editor interface shared by both graph views.
+- `QuestList` stores per-quest graph node positions.
+- Repo-root `ROADMAP.md` — single phased plan.
+
 ## [0.1.0] - 2026-08-31
 
 Initial release of the `com.mochoindiestudio.quest-system` package ("MIS Quest System"): a

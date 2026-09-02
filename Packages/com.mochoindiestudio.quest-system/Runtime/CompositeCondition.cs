@@ -6,7 +6,9 @@ namespace MochoIndieStudio.QuestSystem
 {
     /// <summary>
     /// Combines child conditions with a boolean <see cref="CompositeMode"/> (<c>All</c> / <c>Any</c> /
-    /// <c>None</c>). Nest these to build arbitrary AND/OR/NOT trees.
+    /// <c>None</c>). Nest these to build arbitrary AND/OR/NOT trees. Signals are forwarded to every
+    /// child, so an <c>All</c> / <c>Any</c> of several <see cref="SignalCondition"/>s each track their
+    /// own progress.
     /// </summary>
     [Serializable]
     public sealed class CompositeCondition : QuestCondition
@@ -28,7 +30,7 @@ namespace MochoIndieStudio.QuestSystem
         public List<QuestCondition> Conditions => conditions;
 
         /// <inheritdoc />
-        public override bool Evaluate(IQuestContext context)
+        public override bool Evaluate(in QuestConditionContext context)
         {
             bool anyTrue = false;
             bool allTrue = true;
@@ -36,7 +38,7 @@ namespace MochoIndieStudio.QuestSystem
             for (int i = 0; i < conditions.Count; i++)
             {
                 QuestCondition child = conditions[i];
-                bool result = child != null && child.Evaluate(context);
+                bool result = child != null && child.Evaluate(in context);
 
                 anyTrue |= result;
                 allTrue &= result;
@@ -53,6 +55,23 @@ namespace MochoIndieStudio.QuestSystem
                 default:
                     return false;
             }
+        }
+
+        /// <inheritdoc />
+        public override bool HandleSignal(in QuestConditionContext context, string eventId, string payload, int amount)
+        {
+            bool advanced = false;
+
+            for (int i = 0; i < conditions.Count; i++)
+            {
+                QuestCondition child = conditions[i];
+                if (child != null)
+                {
+                    advanced |= child.HandleSignal(in context, eventId, payload, amount);
+                }
+            }
+
+            return advanced;
         }
     }
 }

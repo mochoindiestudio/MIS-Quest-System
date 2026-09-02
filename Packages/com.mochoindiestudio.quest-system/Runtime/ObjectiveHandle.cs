@@ -35,13 +35,21 @@ namespace MochoIndieStudio.QuestSystem
 
         /// <summary>
         /// Progress toward <see cref="TargetCount"/>. Meaningful for a
-        /// <see cref="SignalCompletion"/>; for other completion kinds it is 0 until the objective
+        /// <see cref="SignalCondition"/> complete-when; for other kinds it is 0 until the objective
         /// completes, then <see cref="TargetCount"/>.
         /// </summary>
         public int CurrentCount { get; internal set; }
 
-        /// <summary>The value <see cref="CurrentCount"/> is counting toward (the "10" in "3 / 10").</summary>
-        public int TargetCount => Definition.Completion != null ? Definition.Completion.GetTargetCount() : 1;
+        /// <summary>The value <see cref="CurrentCount"/> is counting toward (the "10" in "3 / 10").
+        /// 1 when the completion condition is not a counted one.</summary>
+        public int TargetCount
+        {
+            get
+            {
+                int target = Definition.CompleteWhen != null ? Definition.CompleteWhen.GetProgressTarget() : 0;
+                return target > 0 ? target : 1;
+            }
+        }
 
         internal void ResetRuntime()
         {

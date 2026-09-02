@@ -4,17 +4,20 @@ using UnityEngine;
 namespace MochoIndieStudio.QuestSystem
 {
     /// <summary>
-    /// Completes after <see cref="RequiredCount"/> matching game signals have been reported via
-    /// <see cref="QuestSignals.Report"/>. A signal matches when its event id equals
-    /// <see cref="EventId"/> and -- if <see cref="Payload"/> is non-empty -- its payload equals
-    /// <see cref="Payload"/>. This one type covers "kill 10 wolves", "reach the bridge", "talk to
-    /// Giorgio", "press WASD": the consuming game decides what raises each signal.
+    /// Passes once <see cref="RequiredCount"/> matching game signals have been reported via
+    /// <see cref="QuestSignals.Report"/> while the owning objective is active. A signal matches when
+    /// its event id equals <see cref="EventId"/> and -- if <see cref="Payload"/> is non-empty -- its
+    /// payload equals <see cref="Payload"/>. This one type covers "kill 10 wolves", "reach the
+    /// bridge", "talk to Giorgio", "press WASD": the consuming game decides what raises each signal.
     ///
     /// Field names match the MIS Dialog System's <c>DialogEventTrigger</c> on purpose, so a dialog
     /// response event forwards to <see cref="QuestSignals.Report"/> with no translation.
+    ///
+    /// Counting needs an objective to track progress against, so used as a bare
+    /// <see cref="Quest.AdvancedUnlock"/> prerequisite it never passes.
     /// </summary>
     [Serializable]
-    public sealed class SignalCompletion : ObjectiveCompletion
+    public sealed class SignalCondition : QuestCondition
     {
         [Tooltip("The signal id to listen for, e.g. \"enemy_killed\" or \"input.move\".")]
         [SerializeField]
@@ -29,7 +32,7 @@ namespace MochoIndieStudio.QuestSystem
         [SerializeField]
         private int requiredCount = 1;
 
-        /// <summary>Signal id this objective listens for.</summary>
+        /// <summary>Signal id this condition listens for.</summary>
         public string EventId
         {
             get => eventId;
@@ -43,7 +46,7 @@ namespace MochoIndieStudio.QuestSystem
             set => payload = value;
         }
 
-        /// <summary>Matching signals needed to complete. Always at least 1.</summary>
+        /// <summary>Matching signals needed to pass. Always at least 1.</summary>
         public int RequiredCount
         {
             get => Mathf.Max(1, requiredCount);
@@ -51,19 +54,19 @@ namespace MochoIndieStudio.QuestSystem
         }
 
         /// <inheritdoc />
-        public override int GetTargetCount()
+        public override int GetProgressTarget()
         {
             return RequiredCount;
         }
 
         /// <inheritdoc />
-        public override bool IsSatisfied(ObjectiveCompletionContext context)
+        public override bool Evaluate(in QuestConditionContext context)
         {
             return context.Objective != null && context.Objective.CurrentCount >= RequiredCount;
         }
 
         /// <inheritdoc />
-        public override bool HandleSignal(ObjectiveCompletionContext context, string signalId, string signalPayload, int amount)
+        public override bool HandleSignal(in QuestConditionContext context, string signalId, string signalPayload, int amount)
         {
             if (context.Objective == null || amount <= 0)
             {

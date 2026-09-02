@@ -15,7 +15,7 @@ namespace MochoIndieStudio.QuestSystem.Editor
     /// quest, so those edges are not user-editable). All field editing goes through
     /// <see cref="UnityEditor.SerializedObject"/> bindings, so undo and the Inspector stay in sync.
     /// </summary>
-    public sealed class QuestGraphView : GraphView
+    public sealed class QuestGraphView : GraphView, IQuestGraphCanvas
     {
         /// <summary>Editor canvas grid pitch, in canvas pixels. Matches <c>--spacing</c> in QuestGraphView.uss.</summary>
         public const float GridSpacing = 36f;
@@ -177,7 +177,7 @@ namespace MochoIndieStudio.QuestSystem.Editor
         }
 
         /// <summary>Flags the backing <see cref="Quest"/> asset as needing to be saved.</summary>
-        internal void MarkDirty()
+        public void MarkDirty()
         {
             EditorUtility.SetDirty(quest);
         }

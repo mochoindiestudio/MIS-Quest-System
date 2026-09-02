@@ -17,13 +17,13 @@ namespace MochoIndieStudio.QuestSystem.Editor
         /// <summary>Lower bound for a resized node's width, in canvas pixels.</summary>
         private const float MinNodeWidth = 220f;
 
-        private readonly QuestGraphView graph;
+        private readonly IQuestGraphCanvas graph;
         private readonly Action<Vector2> persistPosition;
         private readonly Action<float> persistWidth;
         private readonly Func<float> readWidth;
 
         protected QuestGraphNodeView(
-            QuestGraphView graph,
+            IQuestGraphCanvas graph,
             Vector2 initialPosition,
             Func<float> readWidth,
             Action<Vector2> persistPosition,

@@ -8,8 +8,8 @@ namespace MochoIndieStudio.QuestSystem.Editor
 {
     /// <summary>
     /// View for one <see cref="Objective"/>: its description, required / hidden / stage settings, its
-    /// completion (Signal / Condition / Manual, chosen from the field's type dropdown), and its
-    /// fail-condition list. Deleting the node removes the objective from the quest.
+    /// complete-when condition and its optional fail-when guard (each a <see cref="QuestCondition"/>
+    /// chosen from the field's type dropdown). Deleting the node removes the objective from the quest.
     /// </summary>
     public sealed class ObjectiveNodeView : QuestGraphNodeView
     {
@@ -44,8 +44,8 @@ namespace MochoIndieStudio.QuestSystem.Editor
             row.Add(new PropertyField(serializedObjective.FindPropertyRelative("stage"), "Stage"));
             extensionContainer.Add(row);
 
-            extensionContainer.Add(new PropertyField(serializedObjective.FindPropertyRelative("completion"), "Completion"));
-            extensionContainer.Add(new PropertyField(serializedObjective.FindPropertyRelative("failConditions"), "Fail Conditions (any fails this objective)"));
+            extensionContainer.Add(new PropertyField(serializedObjective.FindPropertyRelative("completeWhen"), "Complete When"));
+            extensionContainer.Add(new PropertyField(serializedObjective.FindPropertyRelative("failWhen"), "Fail When (optional)"));
 
             RefreshExpandedState();
             RefreshPorts();

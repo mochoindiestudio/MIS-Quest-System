@@ -3,28 +3,32 @@
 A node-graph quest editor and UI-agnostic runtime for Unity. Companion to the **MIS Dialog System**
 package.
 
-A **Quest** is a staged list of **Objectives**. Objectives complete when the game reports matching
-**signals** (`QuestSignals.Report("enemy_killed", "wolf")`) -- the same `event id` + `payload` shape
-the Dialog System uses -- or when a `QuestCondition` passes, or when your code says so. Quests carry
-prerequisites, fail conditions, an optional time limit and a repeatable flag; they hold **no reward
-data** -- your game grants rewards from the `OnQuestCompleted` event.
+A **Quest** is a staged list of **Objectives**. Each objective has a **Complete When** condition
+(and an optional **Fail When** guard). The common one is a **signal**:
+`QuestSignals.Report("enemy_killed", "wolf")` -- the same `event id` + `payload` shape the Dialog
+System uses. A quest becomes available when the quests in its **Unlocked By** list are completed
+(plus an optional advanced condition); it fails only when a *required* objective fails or its time
+limit runs out. Quests hold **no reward data** -- your game grants rewards from the
+`OnQuestCompleted` event.
 
 Standalone `Quest` assets are collected into `QuestList` assets (a tutorial, a campaign, a
 side-quest set). The runtime (`QuestLog`) exposes data, events and a save/load snapshot only -- it
 never renders quest UI.
 
-> The graph editor window is not in this build yet. For now, author quests and objectives through
-> the Inspector on the `Quest` / `Quest List` assets.
-
 ## Authoring
 
-- `Create > MIS Quest System > Quest` -- a standalone quest asset. Add objectives to its
-  `Objectives` list; each objective picks a completion kind:
+- **Double-click a `Quest`** to open its graph: the quest root node plus one node per objective.
+  Each objective picks a **Complete When** condition from the type dropdown:
   - **Signal** -- waits for N reports of an `Event Id` (optionally filtered by `Payload`).
-  - **Condition** -- waits for a `QuestCondition` (e.g. "quest X is Completed").
+  - **Quest State** -- waits for another quest to reach a state.
   - **Manual** -- completed only by `QuestLog.CompleteObjective(...)` or a bound predicate.
-- `Create > MIS Quest System > Quest List` -- an ordered list of quests. Turn on **Auto Advance**
-  for a linear list (starts the first quest on register, then each next quest when one completes).
+  - **Composite** -- All / Any / None of nested conditions.
+  Optionally set a **Fail When** condition the same way.
+- **Double-click a `QuestList`** to open its graph: one node per quest. Drag from a quest's
+  **Unlocks** port to another's **Requires** port to make the first a prerequisite of the second.
+  Drop `Quest` assets onto the canvas to add them; "New Quest" makes one beside the list.
+- `Create > MIS Quest System > Quest` / `> Quest List` for new assets. Turn on **Auto Advance** on a
+  list for a linear tutorial (starts the first quest on register, then each next when one completes).
 - Ordering inside a quest: give objectives a **Stage**. Same stage = parallel; the next stage
   activates once every *required* objective of the current stage is complete.
 
@@ -108,7 +112,7 @@ dialogRunner.OnResponseEvent += trigger =>
 | `FailQuest(id, reason)` | Fail an active quest. `reason` defaults to `ScriptedFail`. |
 | `CancelQuest(id)` / `ResetQuest(id)` | Abandon an active quest / restart a finished repeatable one. |
 | `BindObjective(questId, objectiveId, Func<bool>)` | Poll a predicate each `Tick` to complete an objective. Null clears it. |
-| `Tick(deltaTime)` | Advance time limits, poll predicates & conditions, re-evaluate prerequisites/fail conditions. |
+| `Tick(deltaTime)` | Advance time limits, poll predicates & conditions, re-evaluate prerequisites and objective fail guards. |
 | `Report(eventId, payload, amount)` | Deliver a signal to just this log (`QuestSignals.Report` broadcasts to all). |
 | `All` / `Active` / `Completed` / `Failed` | Quest handle lists. |
 | `Get(id)` / `GetQuestState(id)` | One handle / its state (`Inactive` for unknown ids). |

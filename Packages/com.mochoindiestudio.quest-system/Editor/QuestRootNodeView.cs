@@ -7,8 +7,10 @@ using UnityEngine.UIElements;
 namespace MochoIndieStudio.QuestSystem.Editor
 {
     /// <summary>
-    /// View for the quest's root node: title, description, repeatable / time-limit settings, and the
-    /// prerequisite and fail-condition lists. Its single output port fans out to every objective node.
+    /// View for the quest's root node: title, description, repeatable / time-limit settings, the
+    /// unlock mode and the optional advanced-unlock condition. The prerequisite quest *links* are
+    /// edited in the Quest List graph window (there are no other quest nodes on this canvas) -- here
+    /// they show as a read-only summary. The single output port fans out to every objective node.
     /// </summary>
     public sealed class QuestRootNodeView : QuestGraphNodeView
     {
@@ -39,8 +41,10 @@ namespace MochoIndieStudio.QuestSystem.Editor
             extensionContainer.Add(flags);
 
             extensionContainer.Add(new PropertyField(serializedQuest.FindProperty("timeLimitSeconds"), "Time Limit (s, 0 = none)"));
-            extensionContainer.Add(new PropertyField(serializedQuest.FindProperty("prerequisites"), "Prerequisites (all must pass)"));
-            extensionContainer.Add(new PropertyField(serializedQuest.FindProperty("failConditions"), "Fail Conditions (any fails the quest)"));
+
+            extensionContainer.Add(BuildUnlockedBySummary(quest));
+            extensionContainer.Add(new PropertyField(serializedQuest.FindProperty("unlockMode"), "Unlock Mode"));
+            extensionContainer.Add(new PropertyField(serializedQuest.FindProperty("advancedUnlock"), "Advanced Unlock (optional)"));
 
             ObjectivesPort = CreatePort(Direction.Output, Port.Capacity.Multi, quest);
             ObjectivesPort.portName = "Objectives";
@@ -48,6 +52,44 @@ namespace MochoIndieStudio.QuestSystem.Editor
 
             RefreshExpandedState();
             RefreshPorts();
+        }
+
+        /// <summary>A read-only line listing the quests that unlock this one, plus a pointer to where
+        /// those links are edited.</summary>
+        private static Label BuildUnlockedBySummary(Quest quest)
+        {
+            var names = new System.Text.StringBuilder();
+            for (int i = 0; i < quest.UnlockedBy.Count; i++)
+            {
+                Quest prerequisite = quest.UnlockedBy[i];
+                if (prerequisite == null)
+                {
+                    continue;
+                }
+
+                if (names.Length > 0)
+                {
+                    names.Append(", ");
+                }
+
+                names.Append(string.IsNullOrEmpty(prerequisite.Title) ? prerequisite.name : prerequisite.Title);
+            }
+
+            string summary = names.Length > 0
+                ? $"Unlocked by: {names}  ·  edit links in the Quest List graph"
+                : "Unlocked by: nothing  ·  add links in the Quest List graph";
+
+            return new Label(summary)
+            {
+                style =
+                {
+                    whiteSpace = WhiteSpace.Normal,
+                    opacity = 0.7f,
+                    marginTop = 4,
+                    marginBottom = 2,
+                    marginLeft = 3
+                }
+            };
         }
     }
 }

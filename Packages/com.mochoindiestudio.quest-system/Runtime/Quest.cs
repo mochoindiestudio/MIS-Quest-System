@@ -5,9 +5,11 @@ using UnityEngine;
 namespace MochoIndieStudio.QuestSystem
 {
     /// <summary>
-    /// A titled unit of work: a staged list of <see cref="Objectives"/> plus the conditions that
-    /// make it available, the conditions that fail it, an optional time limit and a repeatable flag.
-    /// Authored as a standalone asset and collected into one or more <see cref="QuestList"/>s.
+    /// A titled unit of work: a staged list of <see cref="Objectives"/> plus the quests that unlock
+    /// it (<see cref="UnlockedBy"/>), an optional extra unlock condition, an optional time limit and
+    /// a repeatable flag. Authored as a standalone asset and collected into one or more
+    /// <see cref="QuestList"/>s. Failure is objective-level: a <c>Required</c> objective failing (or
+    /// the time limit) fails the quest.
     ///
     /// The package holds no reward data -- a game grants rewards from its
     /// <see cref="QuestLog.OnQuestCompleted"/> handler.
@@ -31,13 +33,19 @@ namespace MochoIndieStudio.QuestSystem
         [SerializeField]
         private List<Objective> objectives = new List<Objective>();
 
-        [Tooltip("All must pass for the quest to move from Inactive to Available.")]
-        [SerializeReference]
-        private List<QuestCondition> prerequisites = new List<QuestCondition>();
+        [Tooltip("Quests that must be Completed before this one becomes Available. Edit these links " +
+                 "by connecting nodes in the Quest List graph window. Empty = available immediately.")]
+        [SerializeField]
+        private List<Quest> unlockedBy = new List<Quest>();
 
-        [Tooltip("Any passing while the quest is Active fails it.")]
+        [Tooltip("Whether every quest in Unlocked By must be Completed, or just one of them.")]
+        [SerializeField]
+        private PrerequisiteMode unlockMode = PrerequisiteMode.All;
+
+        [Tooltip("Optional extra gate, ANDed with the Unlocked By check. Use a Composite condition " +
+                 "for anything the link graph can't express (non-Completed states, game conditions).")]
         [SerializeReference]
-        private List<QuestCondition> failConditions = new List<QuestCondition>();
+        private QuestCondition advancedUnlock;
 
         [Tooltip("Seconds of accumulated Active time before the quest fails. 0 = no limit.")]
         [Min(0f)]
@@ -74,11 +82,16 @@ namespace MochoIndieStudio.QuestSystem
         /// <summary>The quest's objectives, in author order. Never null; may be empty.</summary>
         public List<Objective> Objectives => objectives;
 
-        /// <summary>Conditions (implicit AND) that gate <see cref="QuestState.Available"/>. Never null.</summary>
-        public List<QuestCondition> Prerequisites => prerequisites;
+        /// <summary>Quests that must be <see cref="QuestState.Completed"/> for this one to become
+        /// <see cref="QuestState.Available"/>, combined per <see cref="UnlockMode"/>. Never null;
+        /// entries may be null. Edited as edges in the Quest List graph window.</summary>
+        public List<Quest> UnlockedBy => unlockedBy;
 
-        /// <summary>Conditions (implicit OR) that fail the quest while active. Never null.</summary>
-        public List<QuestCondition> FailConditions => failConditions;
+        /// <summary>Whether all of <see cref="UnlockedBy"/> or just one must be completed.</summary>
+        public PrerequisiteMode UnlockMode => unlockMode;
+
+        /// <summary>Optional extra unlock gate, ANDed with the <see cref="UnlockedBy"/> check. May be null.</summary>
+        public QuestCondition AdvancedUnlock => advancedUnlock;
 
         /// <summary>Accumulated active-time limit in seconds; <see cref="NoTimeLimit"/> when unlimited.</summary>
         public float TimeLimitSeconds => Mathf.Max(0f, timeLimitSeconds);
@@ -134,7 +147,21 @@ namespace MochoIndieStudio.QuestSystem
 
             for (int i = 0; i < objectives.Count; i++)
             {
-                objectives[i]?.EnsureId();
+                Objective objective = objectives[i];
+                if (objective == null)
+                {
+                    continue;
+                }
+
+                objective.EnsureId();
+
+                // An objective added through the Inspector's list "+" gets a null completion
+                // (SerializedProperty resize does not run the field initializer). Give it the common
+                // default so it is usable straight away; the graph editor already does this.
+                if (objective.CompleteWhen == null)
+                {
+                    objective.CompleteWhen = new SignalCondition();
+                }
             }
         }
 

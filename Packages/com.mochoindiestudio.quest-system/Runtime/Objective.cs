@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace MochoIndieStudio.QuestSystem
@@ -7,8 +6,8 @@ namespace MochoIndieStudio.QuestSystem
     /// <summary>
     /// One line item inside a <see cref="Quest"/> ("press WASD to move", "collect 10 pelts", "talk to
     /// Giorgio"). Stored inline in <see cref="Quest.Objectives"/> as plain serialized data; its
-    /// <see cref="Completion"/> and <see cref="FailConditions"/> are polymorphic
-    /// (<see cref="UnityEngine.SerializeReference"/>).
+    /// <see cref="CompleteWhen"/> and <see cref="FailWhen"/> are polymorphic
+    /// (<see cref="UnityEngine.SerializeReference"/> <see cref="QuestCondition"/>s).
     /// </summary>
     [Serializable]
     public sealed class Objective
@@ -34,11 +33,15 @@ namespace MochoIndieStudio.QuestSystem
         [SerializeField]
         private int stage;
 
+        [Tooltip("The condition that completes this objective. Signal is the common case.")]
         [SerializeReference]
-        private ObjectiveCompletion completion = new SignalCompletion();
+        private QuestCondition completeWhen = new SignalCondition();
 
+        [Tooltip("Optional. If this condition passes while the objective is active, the objective " +
+                 "fails (and the quest fails too when the objective is Required). Use a Composite " +
+                 "condition for more than one check.")]
         [SerializeReference]
-        private List<QuestCondition> failConditions = new List<QuestCondition>();
+        private QuestCondition failWhen;
 
         [SerializeField]
         private Vector2 editorPosition;
@@ -83,15 +86,20 @@ namespace MochoIndieStudio.QuestSystem
             set => stage = Mathf.Max(0, value);
         }
 
-        /// <summary>How this objective is considered done. Never null in normal use.</summary>
-        public ObjectiveCompletion Completion
+        /// <summary>The condition that completes this objective. Never null in normal use.</summary>
+        public QuestCondition CompleteWhen
         {
-            get => completion;
-            set => completion = value;
+            get => completeWhen;
+            set => completeWhen = value;
         }
 
-        /// <summary>Any condition here passing while the objective is active fails it. Never null; may be empty.</summary>
-        public List<QuestCondition> FailConditions => failConditions;
+        /// <summary>Optional guard: if it passes while the objective is active, the objective fails.
+        /// Null means the objective never fails on its own.</summary>
+        public QuestCondition FailWhen
+        {
+            get => failWhen;
+            set => failWhen = value;
+        }
 
         /// <summary>Graph-editor canvas position. Editor-only concern, stored with the data so no
         /// separate layout file is needed (same approach as the MIS Dialog System).</summary>
