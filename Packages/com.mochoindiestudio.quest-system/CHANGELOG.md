@@ -2,6 +2,22 @@
 
 All notable changes to this project are documented here.
 
+## [0.5.0] - 2026-09-03
+
+### Added
+
+- **`SignalCondition.EventId` is now a picked value.** The field carries `[SignalId]` (from
+  `com.mochoindiestudio.signals` 0.2.0), so authoring a signal objective offers a searchable list of
+  ids declared across the project — e.g. the MIS Inventory System's `item_added` / `item_removed` /
+  `item_count`, or anything in a `SignalCatalog`. Still free text; the stored value is unchanged, so
+  existing quest assets need no migration.
+
+### Changed
+
+- Depends on `com.mochoindiestudio.signals` **0.2.0** (was 0.1.0), consumed from
+  `https://github.com/mochoindiestudio/MIS-Signals.git#v0.2.0`. Runtime asmdef also references
+  `MochoIndieStudio.Signals.Authoring`.
+
 ## [0.4.0] - 2026-09-03
 
 Migration to the shared **MIS Signals** bus (`com.mochoindiestudio.signals`), so the Quest, Dialog

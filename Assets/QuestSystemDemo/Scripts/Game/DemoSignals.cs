@@ -4,6 +4,11 @@ namespace MochoIndieStudio.QuestSystemDemo
     /// The signal ids, payloads and item ids the demo uses, in one place. Pickups, the well and the
     /// authored <c>WellQuest</c> asset all reference these so a typo can't silently break a step.
     /// </summary>
+    /// <remarks>
+    /// Not marked <c>[SignalIdProvider]</c>: this class mixes event ids with payload / item-id
+    /// constants, and a provider surfaces <em>every</em> <c>public const string</c>. A provider class
+    /// should hold signal ids only (see <c>InventorySignalIds</c>).
+    /// </remarks>
     public static class DemoSignals
     {
         // Signal event ids (the first argument to MisSignals.Report).

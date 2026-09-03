@@ -22,15 +22,15 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.mochoindiestudio.signals": "0.1.0"
+        "com.mochoindiestudio.signals": "0.2.0"
       }
     },
     "com.mochoindiestudio.signals": {
-      "version": "https://github.com/mochoindiestudio/MIS-Signals.git#v0.1.0",
+      "version": "https://github.com/mochoindiestudio/MIS-Signals.git#v0.2.0",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "b7519a835ac67a8d6a47353af810cd413d39958c"
+      "hash": "9a9d5a0c904b9ef3597eab58671ec448fc63b686"
     },
     "com.unity.2d.common": {
       "version": "12.0.4",

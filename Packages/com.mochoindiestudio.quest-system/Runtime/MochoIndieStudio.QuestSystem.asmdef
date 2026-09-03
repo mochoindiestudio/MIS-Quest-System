@@ -2,7 +2,8 @@
     "name": "MochoIndieStudio.QuestSystem",
     "rootNamespace": "MochoIndieStudio.QuestSystem",
     "references": [
-        "MochoIndieStudio.Signals"
+        "MochoIndieStudio.Signals",
+        "MochoIndieStudio.Signals.Authoring"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

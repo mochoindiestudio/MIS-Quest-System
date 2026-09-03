@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#main",
-    "com.mochoindiestudio.signals": "https://github.com/mochoindiestudio/MIS-Signals.git#v0.1.0",
+    "com.mochoindiestudio.signals": "https://github.com/mochoindiestudio/MIS-Signals.git#v0.2.0",
     "com.unity.2d.tilemap": "1.0.0",
     "com.unity.2d.tilemap.extras": "6.0.3",
     "com.unity.2d.tooling": "1.0.4",

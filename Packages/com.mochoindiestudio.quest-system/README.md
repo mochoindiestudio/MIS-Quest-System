@@ -22,8 +22,8 @@ Add both to a project's `Packages/manifest.json` -- UPM does not resolve a git p
 dependencies for you:
 
 ```jsonc
-"com.mochoindiestudio.quest-system": "https://github.com/mochoindiestudio/MIS-Quest-System.git?path=/Packages/com.mochoindiestudio.quest-system#v0.4.0",
-"com.mochoindiestudio.signals":      "https://github.com/mochoindiestudio/MIS-Signals.git#v0.1.0"
+"com.mochoindiestudio.quest-system": "https://github.com/mochoindiestudio/MIS-Quest-System.git?path=/Packages/com.mochoindiestudio.quest-system#v0.5.0",
+"com.mochoindiestudio.signals":      "https://github.com/mochoindiestudio/MIS-Signals.git#v0.2.0"
 ```
 
 ## Authoring

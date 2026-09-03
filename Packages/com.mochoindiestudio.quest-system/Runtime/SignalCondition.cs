@@ -1,4 +1,5 @@
 using System;
+using MochoIndieStudio.Signals.Authoring;
 using UnityEngine;
 
 namespace MochoIndieStudio.QuestSystem
@@ -20,7 +21,9 @@ namespace MochoIndieStudio.QuestSystem
     [Serializable]
     public sealed class SignalCondition : QuestCondition
     {
-        [Tooltip("The signal id to listen for, e.g. \"enemy_killed\" or \"input.move\".")]
+        [Tooltip("The signal id to listen for, e.g. \"enemy_killed\" or \"input.move\". Pick from the " +
+                 "list (ids declared by [SignalIdProvider] classes and SignalCatalog assets) or type one.")]
+        [SignalId]
         [SerializeField]
         private string eventId;
 
