@@ -16,6 +16,16 @@ Standalone `Quest` assets are collected into `QuestList` assets (a tutorial, a c
 side-quest set). The runtime (`QuestLog`) exposes data, events and a save/load snapshot only -- it
 never renders quest UI.
 
+## Install
+
+Add both to a project's `Packages/manifest.json` -- UPM does not resolve a git package's
+dependencies for you:
+
+```jsonc
+"com.mochoindiestudio.quest-system": "https://github.com/mochoindiestudio/MIS-Quest-System.git?path=/Packages/com.mochoindiestudio.quest-system#v0.4.0",
+"com.mochoindiestudio.signals":      "https://github.com/mochoindiestudio/MIS-Signals.git#v0.1.0"
+```
+
 ## Authoring
 
 - **Double-click a `Quest`** to open its graph: the quest root node plus one node per objective.

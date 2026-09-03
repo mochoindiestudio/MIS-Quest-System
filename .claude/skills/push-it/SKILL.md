@@ -93,3 +93,15 @@ If `git lfs status` shows anything unexpected, surface it before pushing rather 
 
 Pushing is the one irreversible, externally-visible step here — if anything in steps 1-5 felt
 ambiguous and wasn't resolved by asking, pause before this step rather than pushing uncertain state.
+
+## 7. Tag the release
+
+After the push succeeds, tag the release commit so `#vX.Y.Z` git-URL installs resolve:
+
+```
+git tag -a vX.Y.Z -m "MIS Quest System vX.Y.Z"
+git push origin vX.Y.Z
+```
+
+Use the new `X.Y.Z` from step 3. If a same-name tag already exists, stop and ask rather than
+force-moving it.

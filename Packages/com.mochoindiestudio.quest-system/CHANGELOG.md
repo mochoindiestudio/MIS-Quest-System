@@ -22,6 +22,10 @@ and Inventory packages integrate through a game without referencing each other's
 
 - The "Water from the Well" demo (`Assets/QuestSystemDemo/`, not part of the shipped package) and all
   docs are updated to `MisSignals.Report`.
+- `com.mochoindiestudio.signals` is published at
+  `https://github.com/mochoindiestudio/MIS-Signals.git#v0.1.0`; this project's `manifest.json`
+  consumes it from there. UPM does not resolve a git package's dependencies — a game installing this
+  package must add the signals git URL to its own manifest too (see the README).
 
 ## [0.3.0] - 2026-09-02
 
