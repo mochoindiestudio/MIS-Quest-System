@@ -1,4 +1,5 @@
 using MochoIndieStudio.QuestSystem;
+using MochoIndieStudio.Signals;
 using UnityEngine;
 
 namespace MochoIndieStudio.QuestSystemDemo
@@ -23,7 +24,7 @@ namespace MochoIndieStudio.QuestSystemDemo
             }
 
             Inventory.Add(item);
-            QuestSignals.Report(DemoSignals.ItemCollected, item.Id);
+            MisSignals.Report(DemoSignals.ItemCollected, item.Id);
             gameObject.SetActive(false);
         }
     }

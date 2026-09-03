@@ -2,6 +2,27 @@
 
 All notable changes to this project are documented here.
 
+## [0.4.0] - 2026-09-03
+
+Migration to the shared **MIS Signals** bus (`com.mochoindiestudio.signals`), so the Quest, Dialog
+and Inventory packages integrate through a game without referencing each other's assemblies.
+
+### Changed
+
+- **BREAKING — `QuestSignals` is removed.** The package no longer defines its own signal static.
+  `QuestLog` now implements `MochoIndieStudio.Signals.ISignalListener` and subscribes itself to
+  `MisSignals` on construction (unsubscribes on `Dispose`). Replace `QuestSignals.Report(...)` calls
+  with `MisSignals.Report(...)` (`using MochoIndieStudio.Signals;`). `QuestLog.Report(...)` stays
+  public for targeting a single log directly. No migration shim — the package has no external
+  consumers yet.
+- `package.json` now declares a dependency on `com.mochoindiestudio.signals` (>= 0.1.0); the runtime
+  asmdef references `MochoIndieStudio.Signals`.
+
+### Notes
+
+- The "Water from the Well" demo (`Assets/QuestSystemDemo/`, not part of the shipped package) and all
+  docs are updated to `MisSignals.Report`.
+
 ## [0.3.0] - 2026-09-02
 
 ### Added

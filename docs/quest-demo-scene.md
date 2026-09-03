@@ -11,7 +11,7 @@ by its list `WaterFromTheWell` (`autoAdvance = true`):
 
 | # | Objective | Completes on |
 |---|---|---|
-| 0 | Find a wooden bucket | `QuestSignals.Report("item_collected", "bucket")` |
+| 0 | Find a wooden bucket | `MisSignals.Report("item_collected", "bucket")` |
 | 1 | Find a length of rope | `... ("item_collected", "rope")` |
 | 2 | Craft a bucket on a rope | `... ("item_crafted", "bucket_on_rope")` |
 | 3 | Find the old well | `... ("reached", "well")` |

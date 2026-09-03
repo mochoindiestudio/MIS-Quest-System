@@ -4,14 +4,15 @@ using UnityEngine;
 namespace MochoIndieStudio.QuestSystem
 {
     /// <summary>
-    /// Passes once <see cref="RequiredCount"/> matching game signals have been reported via
-    /// <see cref="QuestSignals.Report"/> while the owning objective is active. A signal matches when
-    /// its event id equals <see cref="EventId"/> and -- if <see cref="Payload"/> is non-empty -- its
-    /// payload equals <see cref="Payload"/>. This one type covers "kill 10 wolves", "reach the
-    /// bridge", "talk to Giorgio", "press WASD": the consuming game decides what raises each signal.
+    /// Passes once <see cref="RequiredCount"/> matching game signals have been reported on the shared
+    /// <c>MochoIndieStudio.Signals.MisSignals</c> bus while the owning objective is active. A signal
+    /// matches when its event id equals <see cref="EventId"/> and -- if <see cref="Payload"/> is
+    /// non-empty -- its payload equals <see cref="Payload"/>. This one type covers "kill 10 wolves",
+    /// "reach the bridge", "talk to Giorgio", "press WASD": the consuming game decides what raises
+    /// each signal.
     ///
     /// Field names match the MIS Dialog System's <c>DialogEventTrigger</c> on purpose, so a dialog
-    /// response event forwards to <see cref="QuestSignals.Report"/> with no translation.
+    /// response event forwards to <c>MisSignals.Report</c> with no translation.
     ///
     /// Counting needs an objective to track progress against, so used as a bare
     /// <see cref="Quest.AdvancedUnlock"/> prerequisite it never passes.

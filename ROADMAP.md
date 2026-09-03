@@ -37,7 +37,7 @@ Single source of truth for what's done and what's next. Design detail lives in
 - [ ] Trim it into the package `Samples~/` with a `.meta` and `package.json` `samples` entry
 
 ### Phase 5 — v0.6.0 · Dialog System bridge + polish
-- [ ] Sample glue: `DialogRunner.OnResponseEvent` → `QuestSignals.Report`
+- [ ] Sample glue: `DialogRunner.OnResponseEvent` → `MisSignals.Report`
 - [ ] Per-condition signal counters (multi-goal objectives: "10 wood AND 5 stone")
 - [ ] README / spec / XML-doc pass
 
@@ -55,6 +55,9 @@ Single source of truth for what's done and what's next. Design detail lives in
 
 ## Done
 
+- **v0.4.0** (2026-09-03) — shared-signal-bus migration: depend on `com.mochoindiestudio.signals`;
+  `QuestLog` is now an `ISignalListener` subscribed to `MisSignals`; `QuestSignals` removed
+  (breaking, no external consumers). Demo + docs updated.
 - **v0.1.0** (2026-08-31) — package scaffold, data layer, `QuestLog` runtime engine,
   `QuestSignals` bus, save/load snapshots, `QuestLogHost`, Quest graph editor window,
   custom asset icons.

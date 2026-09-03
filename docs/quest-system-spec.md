@@ -18,7 +18,8 @@ independent packages but follow the same conventions and event style so a game c
 - **Deterministic.** Same quest definitions + same sequence of signal reports and ticks → same
   outcome.
 - Follows the studio C#/Unity guidelines: `MochoIndieStudio.QuestSystem` namespace, composition over
-  inheritance, no static mutable state (the one static is the stateless `QuestSignals` forwarder), no
+  inheritance, no static mutable state (signal fan-out is delegated to the shared, stateless
+  `MochoIndieStudio.Signals.MisSignals` bus — `com.mochoindiestudio.signals`, the one dependency), no
   LINQ / GC in hot paths, `[SerializeField]` not public fields, documented code, no magic numbers.
 
 ## 2. Package identity
@@ -125,7 +126,7 @@ null when the condition is a quest's `AdvancedUnlock`.
 Ships with:
 1. **`SignalCondition`** — the primary type (was `SignalCompletion`). Fields `EventId` (string),
    `Payload` (string, optional), `RequiredCount` (int, default 1). Passes after `RequiredCount`
-   matching `QuestSignals.Report(EventId, Payload)` calls while the objective is active. `Payload`
+   matching `MisSignals.Report(EventId, Payload)` calls while the objective is active. `Payload`
    empty ⇒ any payload. Field names match the Dialog System's `DialogEventTrigger`. Covers kill X /
    collect X / reach X / use X / talk-to X. Never passes as a bare `AdvancedUnlock` (needs an
    objective to count against).
@@ -181,8 +182,8 @@ and reads state to drive its own UI.
 **As built:** events pass runtime `QuestHandle` / `ObjectiveHandle` (not the raw `Quest` /
 `Objective` definitions the pseudo-signatures below imply) — the handle exposes `.Definition` plus
 live state, so a listener never has to look the runtime object back up. `QuestLog` implements
-`IDisposable`; call `Dispose()` (or use `QuestLogHost`) to detach from `QuestSignals`. Query lists
-are `All` / `Active` / `Completed` / `Failed`.
+`IDisposable` and `ISignalListener`; call `Dispose()` (or use `QuestLogHost`) to unsubscribe from
+`MisSignals`. Query lists are `All` / `Active` / `Completed` / `Failed`.
 
 ```csharp
 // setup
@@ -220,26 +221,38 @@ event Action<QuestHandle, QuestState, QuestState> OnQuestStateChanged;   // catc
 An **optional** `QuestLogHost : MonoBehaviour` helper is provided that owns a `QuestLog` and calls
 `Tick` in `Update` — opt-in convenience only; the core stays engine-lifecycle-free.
 
-### Signals (static global)
+### Signals — shared bus (`com.mochoindiestudio.signals`)
+
+Since **v0.4.0** the quest system no longer defines its own signal static. `QuestLog` implements
+`MochoIndieStudio.Signals.ISignalListener` and subscribes itself to the shared `MisSignals` bus on
+construction (unsubscribes on `Dispose`):
 
 ```csharp
-public static class QuestSignals
+namespace MochoIndieStudio.Signals   // com.mochoindiestudio.signals
 {
-    public static void Report(string eventId, string payload = null, int amount = 1);
+    public static class MisSignals
+    {
+        public static void Report(string eventId, string payload = null, int amount = 1);
+        public static void Subscribe(ISignalListener listener);
+        public static void Unsubscribe(ISignalListener listener);
+    }
 }
 ```
 
-Stateless forwarder — it holds no quest state, only the set of live `QuestLog` instances (each
-registers/unregisters itself on construction/disposal). This is the single sanctioned static and it
-carries no mutable game data, so it does not violate the "no static mutable state" rule.
+`MisSignals` is a stateless forwarder — it holds no game state, only the list of live listeners, each
+of which adds/removes itself over its lifetime. It carries no mutable domain data, so it does not
+violate the "no static mutable state" rule (the same exception the old `QuestSignals` relied on, now
+shared with the MIS Inventory and Dialog packages). `QuestLog.Report(...)` stays public for
+targeting a single log directly.
 
 ### Bridge to the Dialog System
 
-The Quest package has **no dependency** on the Dialog package. The consuming game wires them: it
-subscribes to `DialogRunner.OnResponseEvent` and translates each `DialogEventTrigger` into a
-`QuestSignals.Report(trigger.EventId, trigger.Payload)` (or a direct `QuestLog.StartQuest`). Because
-both systems use the same `EventId` + `Payload` shape, this glue is a couple of lines. (In Lucy the
-existing `startQuest` / `endQuest` / `wrongAnswer` dialog events become quest signals.)
+The Quest package has **no dependency** on the Dialog package — both speak the shared `MisSignals`
+bus. The consuming game (or the Dialog runner's optional auto-publish) turns each
+`DialogEventTrigger` into a `MisSignals.Report(trigger.EventId, trigger.Payload)` (or a direct
+`QuestLog.StartQuest`). Because both systems use the same `EventId` + `Payload` shape, this glue is a
+couple of lines. (In Lucy the existing `startQuest` / `endQuest` / `wrongAnswer` dialog events become
+quest signals.)
 
 ## 6. Save / load (in scope for v0.1.0)
 
@@ -325,8 +338,8 @@ Same order the Dialog System used — data layer first, editor and runtime on to
    generation; create-asset menus. *(v0.2.0: unified condition tree — see §3.)*
 3. **Runtime engine** (`Runtime/`) — `IQuestContext`, `QuestLog` (registry, state machines,
    objective/stage tracking, signal counting, fail/prereq evaluation, time limits, events),
-   `QuestSignals` static bus, `QuestHandle` query view, `QuestLogSnapshot` capture/restore, optional
-   `QuestLogHost` MonoBehaviour.
+   `MisSignals` subscription (shared bus), `QuestHandle` query view, `QuestLogSnapshot`
+   capture/restore, optional `QuestLogHost` MonoBehaviour.
 4. **Editor** (`Editor/`) — GraphView window + Quest/Objective node views + prerequisite edges +
    create/delete UX + toolbar (snap-to-grid); custom Project-window icons (`MonoImporter.SetIcon`);
    custom inspectors.

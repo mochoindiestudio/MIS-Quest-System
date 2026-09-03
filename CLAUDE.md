@@ -10,8 +10,8 @@ several Mocho Indie Studio games and a companion to the **MIS Dialog System** pa
 project in this repo exists only to exercise/demo the package. This is non-negotiable: nothing in the
 runtime API, editor tooling, or data assets may assume it lives inside one specific game's `Assets/`.
 
-**v0.1.0 implemented** (2026-08-31), compiling clean: `Runtime/` (22 scripts — data layer +
-`QuestLog` engine + `QuestSignals` + snapshots + optional `QuestLogHost`) and `Editor/` (6 scripts —
+**v0.1.0 implemented** (2026-08-31), compiling clean: `Runtime/` (data layer + `QuestLog` engine +
+signal bus + snapshots + optional `QuestLogHost`) and `Editor/` (6 scripts —
 `QuestGraphEditorWindow` GraphView, opens on double-clicking a `Quest`; `QuestRootNodeView` +
 `ObjectiveNodeView` with `SerializedObject`-bound `PropertyField`s; `QuestAssetIcons`). **Not built:**
 the QuestList prerequisite-graph view (QuestList uses the default Inspector), EditMode tests. Read
@@ -21,8 +21,10 @@ the QuestList prerequisite-graph view (QuestList uses the default Inspector), Ed
   namespace `MochoIndieStudio.QuestSystem`), laid out like the Dialog System's
   `com.mochoindiestudio.node-dialog-system`. **No Assets-side copy of package scripts.**
 - Core model: a **Quest** is a staged list of **Objectives**; standalone `Quest` assets referenced by
-  `QuestList` assets. Completion driven by a static `QuestSignals.Report(eventId, payload)` bus that
-  reuses the Dialog System's `EventId`+`Payload` shape. Rewards are the game's job (its
+  `QuestList` assets. Completion driven by signals on the shared **MIS Signals** bus
+  (`com.mochoindiestudio.signals`) — `QuestLog` is an `ISignalListener` subscribed to
+  `MisSignals.Report(eventId, payload)`, the same `EventId`+`Payload` shape the Dialog and Inventory
+  packages use (**v0.4.0**; there is no more `QuestSignals` type). Rewards are the game's job (its
   `OnQuestCompleted` handler).
 
 Key facts:

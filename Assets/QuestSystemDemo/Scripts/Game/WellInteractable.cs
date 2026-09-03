@@ -1,4 +1,4 @@
-using MochoIndieStudio.QuestSystem;
+using MochoIndieStudio.Signals;
 using UnityEngine;
 
 namespace MochoIndieStudio.QuestSystemDemo
@@ -34,7 +34,7 @@ namespace MochoIndieStudio.QuestSystemDemo
             // You lower the bucket on a rope into the well -- it's consumed here (game/inventory
             // concern); the game grants the Bucket of Water as the quest-completion reward.
             Inventory.Remove(DemoSignals.BucketOnRope);
-            QuestSignals.Report(DemoSignals.Used, DemoSignals.Well);
+            MisSignals.Report(DemoSignals.Used, DemoSignals.Well);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -46,7 +46,7 @@ namespace MochoIndieStudio.QuestSystemDemo
 
             playerInRange = true;
             reportTimer = 0f;
-            QuestSignals.Report(DemoSignals.Reached, DemoSignals.Well);
+            MisSignals.Report(DemoSignals.Reached, DemoSignals.Well);
         }
 
         private void OnTriggerExit2D(Collider2D other)
@@ -68,7 +68,7 @@ namespace MochoIndieStudio.QuestSystemDemo
             if (reportTimer >= ReReportInterval)
             {
                 reportTimer = 0f;
-                QuestSignals.Report(DemoSignals.Reached, DemoSignals.Well);
+                MisSignals.Report(DemoSignals.Reached, DemoSignals.Well);
             }
         }
     }

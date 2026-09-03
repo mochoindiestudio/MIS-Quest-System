@@ -1,10 +1,13 @@
 {
   "name": "com.mochoindiestudio.quest-system",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "displayName": "MIS Quest System",
   "description": "A node-graph quest editor and UI-agnostic runtime for Unity. Author quests as staged lists of objectives, driven by named game signals (event id + payload) so the package never needs to know about your inventory, combat or world. Standalone Quest assets are collected into QuestList assets (tutorials, campaigns, side-quest sets). The runtime exposes data, events and a save/load snapshot only -- you drive whatever quest UI your game already uses. Companion to the MIS Dialog System package.",
   "unity": "6000.0",
   "license": "MIT",
+  "dependencies": {
+    "com.mochoindiestudio.signals": "0.1.0"
+  },
   "keywords": [
     "quest",
     "quests",

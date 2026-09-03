@@ -21,6 +21,14 @@
       "version": "file:com.mochoindiestudio.quest-system",
       "depth": 0,
       "source": "embedded",
+      "dependencies": {
+        "com.mochoindiestudio.signals": "0.1.0"
+      }
+    },
+    "com.mochoindiestudio.signals": {
+      "version": "file:../../MIS Signals",
+      "depth": 0,
+      "source": "local",
       "dependencies": {}
     },
     "com.unity.2d.common": {

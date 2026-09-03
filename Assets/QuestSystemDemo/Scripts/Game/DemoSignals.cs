@@ -6,7 +6,7 @@ namespace MochoIndieStudio.QuestSystemDemo
     /// </summary>
     public static class DemoSignals
     {
-        // Signal event ids (the first argument to QuestSignals.Report).
+        // Signal event ids (the first argument to MisSignals.Report).
         public const string ItemCollected = "item_collected";
         public const string ItemCrafted = "item_crafted";
         public const string Reached = "reached";

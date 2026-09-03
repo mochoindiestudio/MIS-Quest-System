@@ -5,8 +5,9 @@ package.
 
 A **Quest** is a staged list of **Objectives**. Each objective has a **Complete When** condition
 (and an optional **Fail When** guard). The common one is a **signal**:
-`QuestSignals.Report("enemy_killed", "wolf")` -- the same `event id` + `payload` shape the Dialog
-System uses. A quest becomes available when the quests in its **Unlocked By** list are completed
+`MisSignals.Report("enemy_killed", "wolf")` on the shared **MIS Signals** bus
+(`com.mochoindiestudio.signals`, this package's one dependency) -- the same `event id` + `payload`
+shape the Dialog System uses. A quest becomes available when the quests in its **Unlocked By** list are completed
 (plus an optional advanced condition); it fails only when a *required* objective fails or its time
 limit runs out. Quests hold **no reward data** -- your game grants rewards from the
 `OnQuestCompleted` event.
@@ -42,6 +43,7 @@ never renders quest UI.
 
 ```csharp
 using MochoIndieStudio.QuestSystem;
+using MochoIndieStudio.Signals;
 using UnityEngine;
 
 public class QuestHud : MonoBehaviour
@@ -67,8 +69,8 @@ public class QuestHud : MonoBehaviour
     private void OnDestroy() => log.Dispose();
 
     // Somewhere in your gameplay code:
-    //   QuestSignals.Report("enemy_killed", "wolf");
-    //   QuestSignals.Report("reached", "whiterun_gate");
+    //   MisSignals.Report("enemy_killed", "wolf");
+    //   MisSignals.Report("reached", "whiterun_gate");
 
     private void GrantRewards(QuestHandle quest)
     {
@@ -95,11 +97,12 @@ public class QuestHud : MonoBehaviour
 
 ### Bridging the Dialog System
 
-The Quest package has no dependency on the Dialog package. Wire them in your game:
+The Quest package has no dependency on the Dialog package -- both just speak the shared **MIS
+Signals** bus. Wire them in your game:
 
 ```csharp
 dialogRunner.OnResponseEvent += trigger =>
-    QuestSignals.Report(trigger.EventId, trigger.Payload);
+    MisSignals.Report(trigger.EventId, trigger.Payload);
 ```
 
 ### API surface -- `QuestLog`
@@ -113,11 +116,11 @@ dialogRunner.OnResponseEvent += trigger =>
 | `CancelQuest(id)` / `ResetQuest(id)` | Abandon an active quest / restart a finished repeatable one. |
 | `BindObjective(questId, objectiveId, Func<bool>)` | Poll a predicate each `Tick` to complete an objective. Null clears it. |
 | `Tick(deltaTime)` | Advance time limits, poll predicates & conditions, re-evaluate prerequisites and objective fail guards. |
-| `Report(eventId, payload, amount)` | Deliver a signal to just this log (`QuestSignals.Report` broadcasts to all). |
+| `Report(eventId, payload, amount)` | Deliver a signal to just this log (`MisSignals.Report` broadcasts to every subscribed log). |
 | `All` / `Active` / `Completed` / `Failed` | Quest handle lists. |
 | `Get(id)` / `GetQuestState(id)` | One handle / its state (`Inactive` for unknown ids). |
 | `CaptureState()` / `RestoreState(snapshot)` | Save-game round-trip. Restore is silent -- rebuild UI from queries after. |
-| `Dispose()` | Detach from `QuestSignals`. |
+| `Dispose()` | Unsubscribe from `MisSignals`. |
 | `OnQuestAvailable` / `OnQuestStarted` / `OnQuestAdvanced` / `OnObjectiveCompleted` / `OnObjectiveFailed` / `OnQuestCompleted` / `OnQuestFailed` / `OnQuestCancelled` / `OnQuestStateChanged` | Lifecycle events. |
 
 `QuestLog` is deterministic: the same quest definitions plus the same sequence of `Report` and

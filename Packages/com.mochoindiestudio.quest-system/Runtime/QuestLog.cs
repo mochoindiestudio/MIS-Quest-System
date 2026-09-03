@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using MochoIndieStudio.Signals;
 using UnityEngine;
 
 namespace MochoIndieStudio.QuestSystem
@@ -10,10 +11,10 @@ namespace MochoIndieStudio.QuestSystem
     /// A game normally creates one, registers the <see cref="QuestList"/>s it cares about, pumps
     /// <see cref="Tick"/> from its update loop, and reads state to drive its own UI.
     ///
-    /// It renders no UI itself. Dispose it (or let it be collected) to detach from
-    /// <see cref="QuestSignals"/>.
+    /// It renders no UI itself. Dispose it (or let it be collected) to detach from the shared
+    /// <see cref="MisSignals"/> bus.
     /// </summary>
-    public sealed class QuestLog : IQuestContext, IDisposable
+    public sealed class QuestLog : IQuestContext, IDisposable, ISignalListener
     {
         private const int MaxReevaluatePasses = 16;
 
@@ -30,10 +31,10 @@ namespace MochoIndieStudio.QuestSystem
         private bool reevaluating;
         private bool disposed;
 
-        /// <summary>Creates a log and attaches it to <see cref="QuestSignals"/>.</summary>
+        /// <summary>Creates a log and subscribes it to the shared <see cref="MisSignals"/> bus.</summary>
         public QuestLog()
         {
-            QuestSignals.Register(this);
+            MisSignals.Subscribe(this);
         }
 
         #region Events
@@ -416,8 +417,17 @@ namespace MochoIndieStudio.QuestSystem
         #region Signals
 
         /// <summary>
-        /// Delivers a game signal to this log. Normally called for you by
-        /// <see cref="QuestSignals.Report"/>; call it directly only to target a single log.
+        /// Receives a signal from the shared <see cref="MisSignals"/> bus (the log subscribes itself
+        /// on construction). Forwards to <see cref="Report"/>.
+        /// </summary>
+        void ISignalListener.OnSignal(string eventId, string payload, int amount)
+        {
+            Report(eventId, payload, amount);
+        }
+
+        /// <summary>
+        /// Delivers a game signal to this log. The shared <see cref="MisSignals"/> bus calls this for
+        /// every subscribed log; call it directly only to target a single log without broadcasting.
         /// </summary>
         public void Report(string eventId, string payload = null, int amount = 1)
         {
@@ -972,7 +982,7 @@ namespace MochoIndieStudio.QuestSystem
 
         #endregion
 
-        /// <summary>Detaches the log from <see cref="QuestSignals"/>. Safe to call more than once.</summary>
+        /// <summary>Unsubscribes the log from <see cref="MisSignals"/>. Safe to call more than once.</summary>
         public void Dispose()
         {
             if (disposed)
@@ -981,7 +991,7 @@ namespace MochoIndieStudio.QuestSystem
             }
 
             disposed = true;
-            QuestSignals.Unregister(this);
+            MisSignals.Unsubscribe(this);
         }
     }
 }

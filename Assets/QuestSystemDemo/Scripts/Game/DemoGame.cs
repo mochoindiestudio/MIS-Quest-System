@@ -1,4 +1,5 @@
 using MochoIndieStudio.QuestSystem;
+using MochoIndieStudio.Signals;
 using UnityEngine;
 
 namespace MochoIndieStudio.QuestSystemDemo
@@ -77,7 +78,7 @@ namespace MochoIndieStudio.QuestSystemDemo
             inventory.Remove(DemoSignals.Bucket);
             inventory.Remove(DemoSignals.Rope);
             inventory.Add(bucketOnRope);
-            QuestSignals.Report(DemoSignals.ItemCrafted, DemoSignals.BucketOnRope);
+            MisSignals.Report(DemoSignals.ItemCrafted, DemoSignals.BucketOnRope);
             return true;
         }
 
